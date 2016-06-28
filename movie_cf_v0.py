@@ -16,10 +16,16 @@ def get_rec_data(top10_near):
         if i != guest_id:
             mult_rec[i] = data[i] * (1 + top10_near[i][0])
 
-    return (mult_rec.T.sum().sort_values(ascending=False)).head(10)
+    return mult_rec.T.sum().sort_values(ascending=False).to_frame('recommend rate').head(10)
 
 guest_id = int(input('insert a user id : '))
-data = pd.read_table('data/u.data', sep='\t', usecols=['user id', 'item id', 'rating'])
-data = data.pivot_table(index='item id', columns='user id', values='rating', fill_value=0)
-top10_near = get_sim_data(data)
-print(get_rec_data(top10_near))
+
+data = pd.read_table('data/u.data', sep='\t', usecols=['user id', 'movie id', 'rating'])
+data = data.pivot_table(index='movie id', columns='user id', values='rating', fill_value=0)
+data = get_rec_data(get_sim_data(data))
+
+item = pd.read_table('data/u.item', sep='|', usecols=['movie id', 'movie title', 'release date'])
+item = item.set_index(['movie id'])
+pd.concat([data, item], axis=1, join_axes=[data.index])
+
+#data[data[guest_id] > 0][guest_id].to_frame('user id')
