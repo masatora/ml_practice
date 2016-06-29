@@ -26,6 +26,6 @@ data = get_rec_data(get_sim_data(data))
 
 item = pd.read_table('data/u.item', sep='|', usecols=['movie id', 'movie title', 'release date'])
 item = item.set_index(['movie id'])
-pd.concat([data, item], axis=1, join_axes=[data.index])
+print(pd.concat([data, item], axis=1, join_axes=[data.index]))
 
 #data[data[guest_id] > 0][guest_id].to_frame('user id')
